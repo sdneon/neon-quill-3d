@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neon Quill 3D</title>
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": { "three": "/vendor/three/build/three.module.js", "three/addons/": "/vendor/three/examples/jsm/" } }
+</script>
+</head>
+<body>
+<header>
+  <h1>Neon Quill 3D</h1>
+  <input id="text" type="text" spellcheck="false" autocomplete="off" aria-label="Preview text" placeholder="Type preview text…  ( | starts a new line )" title="Use | to start a new line">
+  <label class="ctl" title="Show every character of the font under the text"><input id="show-all" type="checkbox" checked> All letters</label>
+  <label class="ctl" title="Space between letters">Spacing <input id="spacing" type="range" min="-0.1" max="0.5" step="0.01" value="0.08"></label>
+  <label class="ctl" title="Model colour"><input id="color" type="color" value="#4f8ef7" aria-label="Model colour"></label>
+</header>
+
+<aside>
+  <div class="side-head">
+    <span id="font-count">Fonts</span>
+    <span><button id="add-open" title="Make a 3D font from an installed font or from Google Fonts">Add…</button> <button id="find-open" title="Identify the font of a sample letter STL">Find…</button> <button id="rescan" title="Look through the assets folder again">Rescan</button></span>
+  </div>
+  <div id="status" hidden></div>
+  <ul id="fonts"></ul>
+  <div id="assets-path"></div>
+</aside>
+
+<main>
+  <div id="view">
+    <canvas id="canvas"></canvas>
+    <div id="missing" hidden></div>
+    <div id="loading" hidden></div>
+    <div id="nav">
+      <div id="cube-box" title="Click a face to snap to that view, or drag the cube to rotate">
+        <div id="cube">
+          <div class="face" data-view="front">Front</div>
+          <div class="face" data-view="back">Back</div>
+          <div class="face" data-view="right">Right</div>
+          <div class="face" data-view="left">Left</div>
+          <div class="face" data-view="top">Top</div>
+          <div class="face" data-view="bottom">Bottom</div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button data-view="iso" title="Three-quarter perspective view">3D</button>
+        <button id="fit" title="Fit text in view (double-click the view)">Fit</button>
+      </div>
+      <div class="nav-row seg" role="group" aria-label="Projection">
+        <button id="proj-ortho" class="on" title="Orthographic projection">Ortho</button>
+        <button id="proj-persp" title="Perspective projection">Persp</button>
+      </div>
+    </div>
+    <div id="help">drag: rotate · right-drag: pan · wheel: zoom</div>
+  </div>
+  <section id="glyph-panel">
+    <div class="panel-head">
+      <span id="glyph-title">Glyphs</span>
+      <a id="all-link" hidden title="Every letter of this font in one STL file">All-in-one STL</a>
+      <span class="hint">click a glyph to type it · edit the label under a glyph to correct it</span>
+    </div>
+    <div id="glyphs"></div>
+  </section>
+</main>
+
+<dialog id="add">
+  <div class="find-head"><b>Add a font</b><button id="add-close" aria-label="Close">✕</button></div>
+  <p class="hint">Any ordinary font (TTF/OTF) can be extruded into 3D letters: one STL per letter in the cache, plus one STL with all of them.</p>
+  <div class="add-row"><label for="add-sys">Installed font</label><input id="add-sys" autocomplete="off" placeholder="type to filter, or pick from the list…"><button id="add-sys-go">Make 3D</button></div>
+  <ul id="sys-list" role="listbox" aria-label="Installed fonts"></ul>
+  <div class="add-row"><label for="add-google">Google Fonts</label><input id="add-google" placeholder="family name, e.g. Lobster">
+    <select id="add-weight" aria-label="Weight"><option value="400">Regular</option><option value="700">Bold</option><option value="900">Black</option><option value="300">Light</option></select>
+    <button id="add-google-go">Download</button></div>
+  <p class="hint">Or simply drop <code>.ttf</code>/<code>.otf</code> files (zipped is fine) into the assets folder or the project's <code>fonts</code> folder and press Rescan.</p>
+  <div id="add-status" class="hint"></div>
+</dialog>
+
+<dialog id="find">
+  <div class="find-head"><b>Find font by sample</b><button id="find-close" aria-label="Close">✕</button></div>
+  <p class="hint">Pick one or more STL (or 3MF) files, each holding a single letter. They are compared with the same letter in every installed system font and every 3D font in the library. Select a result to see it large beside your samples.</p>
+  <input id="find-files" type="file" accept=".stl,.3mf" multiple>
+  <div id="find-top"><div id="find-samples"></div><div id="find-big" aria-live="polite"></div></div>
+  <div id="find-status" class="hint"></div>
+  <ol id="find-results"></ol>
+</dialog>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
